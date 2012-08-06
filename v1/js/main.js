@@ -14,7 +14,7 @@ $(function() {
 
   var Wines = Backbone.Collection.extend({
     model: Wine,
-    url: 'http://localhost:8080/cellar/rest/wines',
+    url: 'http://localhost:9000/wines',
     comparator: function(wine) {
       return wine.get('year');
     }
