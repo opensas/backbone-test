@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>Backbone.js Wines</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/main.css">
+  </head>
+
+  <body>
+    <div class="container">
+
+      <div id="navbar"></div>
+      <div id="breadcrumb"></div>
+
+      <div id="wines"></div>
+
+      <div id="wineForm"></div>
+
+    </div>
+  </body>
+
+</html>
+
+<!-- Templates -->
+<script type="text/template" id="wines-template">
+
+  <h1>Wines</h1>
+
+  <input type="text" id="filter">
+
+  <table id="member-table" class="table table-striped table-bordered">
+    <thead>
+      <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>grapes</th>
+        <th>country</th>
+        <th>region</th>
+        <th>year</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+  <a class="btn btn-primary btn-success btn-small add" href="#wines/new">
+    <i class="icon-plus icon-white"></i>add</div>    
+</script>
+
+<script type="text/template" id="wine-template">
+<td><%= id %></td>
+<td><%= name %></td>
+<td><%= grapes %></td>
+<td><%= country %></td>
+<td><%= region %></td>
+<td><%= year %></td>
+<td class="action">
+  <a class="btn btn-danger btn-small delete" href="#wines/del/<%= id %>">
+    <i class="icon-trash icon-white"></i>del</a>
+  <a class="btn btn-info btn-small edit" href="#wines/<%= id %>">
+    <i class="icon-pencil icon-white"></i>edit</a>
+</td>  
+</script>
+
+<script type="text/template" id="wineForm-template">
+<h2>Edit wine</h2>
+
+<div class="row">
+  <div class="span4">
+    <p></p>
+    <p>Edit wine</p>
+    <p>Come contextual help on wine edition...</p>
+  </div>
+  <div class="span8">
+    <form class="form-horizontal">
+      <fieldset>
+        <div class="control-group">
+          <label class="control-label" for="id">id</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge disabled" id="id" disabled="" 
+              value="<%= id || 'new' %>">
+            <p class="help-block">The id is automatically assigned by the web service, so you cannot edit it...</p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="name">Name</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" id="name" value="<%= name %>">
+            <p class="help-block">Enter the name of the member</p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="grapes">Grapes</label>
+          <div class="controls">
+            <div class="input-prepend">
+              <span class="add-on">@</span>
+              <input class="span2" id="grapes" size="16" type="text" value="<%= grapes %>">
+            </div>
+            <p class="help-block">Enter the grapes</p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="country">Country</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" id="country" value="<%= country %>">
+            <p class="help-block">Enter the wine''s country</p>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="country">Year</label>
+          <div class="controls">
+            <input type="text" class="input-xlarge" id="year" value="<%= year %>">
+            <p class="help-block">Enter the wine''s year</p>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <div class="btn btn-primary save">Save changes</div>
+          <div class="btn cancel">Cancel</div>
+        </div>
+      </fieldset>
+    </form>
+  </div>
+</div>
+
+</script>
+
+<script type="text/template" id="navbar-template">
+<div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">Backbone tutorial</a>
+      <div class="nav-collapse">
+        <ul class="nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="#">Link</a></li>
+        </ul>
+        <ul class="nav pull-right">
+          <li><a href="#">Link</a></li>
+        </ul>
+      </div><!-- /.nav-collapse -->
+    </div>
+  </div><!-- /navbar-inner -->
+</div>
+</script>  
+
+<script type="text/template" id="breadcrumb-template">
+<ul class="breadcrumb">
+  <li>
+    <a href="#">Home</a> <span class="divider">/</span>
+  </li>
+  <li>
+    <a href="#">Data</a> <span class="divider">/</span>
+  </li>
+  <li class="active">Members</li>
+</ul>
+</script>  
+
+<script src="../lib/json2.min.js"></script>
+<!--<script src="js/lib/jquery-1.7.2.min.js"></script>-->
+<script src="../lib/zepto-1.0rc1.min.js"></script>
+<script src="../lib/underscore-1.3.3.js"></script>
+<script src="../lib/backbone-0.9.2.min.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/main.js"></script>
