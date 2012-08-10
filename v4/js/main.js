@@ -15,25 +15,37 @@ $(function() {
   var Wines = Backbone.Collection.extend({
 
     model: Wine,
-
     url: 'http://localhost:9000/wines',
+    params: {},
+    total: 0,
+    initialize: function(options) {
+      options || (options = {});
+      if (options.params) this.params = options.params;
+
+      _.bindAll(this, 'fetch', 'fetch_total');
+    },
 
     fetch: function() {
-      options = {};
-      data = {};
-      if (this.filter) data.filter = this.filter;
-      if (this.order) data.order = this.order;
-      if (this.page) data.page = this.page;
-      if (this.len) data.len = this.len;
-
-      options.data = data;
-
+      options = { data: this.params };
+      this.fetch_total();
       return Backbone.Collection.prototype.fetch.call(this, options);
     },
 
-    comparator: function(wine) {
-      return wine.get('year');
+    fetch_total: function() {
+      var options = { 
+        url: this.url + '/count',
+        data: this.params,
+        contentType: 'application/json',
+        success: function(resp, status, xhr) {
+          console.log('back from count');
+          console.log(resp);
+          console.log(status);
+          return true;
+        }
+      };
+      return $.ajax(options);
     }
+
   });
 
   var WinesTable = Backbone.View.extend({
@@ -47,18 +59,23 @@ $(function() {
 
     events: {
       'keyup #filter_text': 'filter_debounced',
-      'click div.filter': 'filter'
+      'click div.filter':   'filter',
+      'click a.page_2':     'go_page'
     },
     
     filter: function() {
-      this.collection.filter = $("#filter_text").val();
+      this.collection.params.filter = $("#filter_text").val();
       this.collection.fetch();
     },
 
     filter_debounced: _.debounce(function() {
-      this.collection.filter = $("#filter_text").val();
+      this.collection.params.filter = $("#filter_text").val();
       this.collection.fetch();
-    }, 500)
+    }, 500),
+
+    go_page: function(e) {
+      app.navigate('wines?page=2&len=5', {trigger: true});
+    }
 
   })
 
@@ -146,7 +163,7 @@ $(function() {
     },
 
     cancel: function() {
-      app.navigate('wines', {trigger: true});
+      app.navigate('#wines', {trigger: true});
     },
 
     close: function() {
@@ -171,19 +188,17 @@ $(function() {
     initialize: function() {
       $('#navbar').html($('#navbar-template').html());
       $('#breadcrumb').html($('#breadcrumb-template').html());
+
+      this.wines = new Wines();
+      this.winesTable = new WinesTable({collection: this.wines});
+      this.winesTable.render();
     },
 
     list: function(query) {
-
-      query = utils.http.parseQuery(query);
-
       if (this.wineFormView) this.wineFormView.close();
-      this.wines = new Wines({filter: query.filter});
-      
-      this.winesTable = new WinesTable({collection: this.wines});
-      this.winesTable.render();
-      this.winesView = new WinesView({collection: this.wines});
+      this.wines.params = utils.http.parseQuery(query);
 
+      this.winesView = new WinesView({collection: this.wines});
       this.wines.fetch();
       $('#wines').show();
     },

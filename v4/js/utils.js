@@ -21,20 +21,14 @@ utils.http.parseQueryString = function(url) {
 }
 
 utils.http.parseQuery = function(url, defaults) {
-  var parsed = utils.http.parseQueryString(url);
-  return {
-    page:   parseInt(parsed.page || 1),
-    len:    parseInt(parsed.len || 10),
-    sort:   (parsed.sort || '').toString(),
-    filter: (parsed.filter || '').toString()
-  }/*
+  var queryString = utils.http.parseQueryString(url);
 
-  defaults = defaults || {
-    page:   1,
-    len:    10,
-    sort:   "",
-    filter: "", 
-  };
-  return _.defaults(utils.http.parseQueryString(url), defaults);
-  */
+  var parsed = {};
+
+  if (queryString.page)   parsed.page   = queryString.page;
+  if (queryString.len)    parsed.len    = queryString.len;
+  if (queryString.order)  parsed.order  = queryString.order;
+  if (queryString.filter) parsed.filter = queryString.filter;
+
+  return parsed;
 }
