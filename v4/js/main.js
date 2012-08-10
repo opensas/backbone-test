@@ -13,40 +13,76 @@ $(function() {
   });
 
   var Wines = Backbone.Collection.extend({
+
     model: Wine,
 
-    filter: '',
+    url: 'http://localhost:9000/wines',
 
-    url: function() {
-      var url = 'http://localhost:9000/wines';
-      if (this.filter) url += '/filter=' = filter;
-      return url;
+    fetch: function() {
+      options = {};
+      data = {};
+      if (this.filter) data.filter = this.filter;
+      if (this.order) data.order = this.order;
+      if (this.page) data.page = this.page;
+      if (this.len) data.len = this.len;
+
+      options.data = data;
+
+      return Backbone.Collection.prototype.fetch.call(this, options);
     },
+
     comparator: function(wine) {
       return wine.get('year');
     }
   });
 
+  var WinesTable = Backbone.View.extend({
+    el: '#wines',
+    template: _.template($('#wines-template').html()),
+
+    render: function() {
+      this.$el.html(this.template());
+      return this;
+    },
+
+    events: {
+      'keyup #filter_text': 'filter_debounced',
+      'click div.filter': 'filter'
+    },
+    
+    filter: function() {
+      this.collection.filter = $("#filter_text").val();
+      this.collection.fetch();
+    },
+
+    filter_debounced: _.debounce(function() {
+      this.collection.filter = $("#filter_text").val();
+      this.collection.fetch();
+    }, 500)
+
+  })
+
   var WinesView = Backbone.View.extend({
 
-    el: '#wines',
+    el: '#wines tbody',
+    template: _.template($('#wines-template').html()),
 
-    initialize:function () {
-      this.model.bind('reset', this.render, this);
-      this.model.bind('change', this.render, this);
+    initialize: function() {
+      this.collection.bind('reset', this.render, this);
+      this.collection.bind('change', this.render, this);
     },
 
     render: function() {
-      this.$el.html($('#wines-template').html());
-      var tbody = this.$('tbody');
 
-      _.each(this.model.models, function(wine) {
+      this.$el.empty();
+
+      _.each(this.collection.models, function(wine) {
         var view = new WineView({model: wine});
-        tbody.append(view.render().el);
+        this.$el.append(view.render().el);
       }, this);
 
       return this;      
-    },
+    }
 
   });
 
@@ -140,11 +176,14 @@ $(function() {
     list: function(query) {
 
       query = utils.http.parseQuery(query);
-      console.log(query);
 
       if (this.wineFormView) this.wineFormView.close();
-      this.wines = new Wines();
-      this.winesView = new WinesView({model: this.wines});
+      this.wines = new Wines({filter: query.filter});
+      
+      this.winesTable = new WinesTable({collection: this.wines});
+      this.winesTable.render();
+      this.winesView = new WinesView({collection: this.wines});
+
       this.wines.fetch();
       $('#wines').show();
     },
@@ -174,9 +213,6 @@ $(function() {
     }
 
   })
-
-
-
 
   var app = new AppRouter();
   Backbone.history.start();

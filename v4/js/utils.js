@@ -26,7 +26,7 @@ utils.http.parseQuery = function(url, defaults) {
     page:   parseInt(parsed.page || 1),
     len:    parseInt(parsed.len || 10),
     sort:   (parsed.sort || '').toString(),
-    filter: (parsed.sort || '').toString()
+    filter: (parsed.filter || '').toString()
   }/*
 
   defaults = defaults || {
