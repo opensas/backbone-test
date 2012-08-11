@@ -15,9 +15,12 @@ $(function() {
   var Wines = Backbone.Collection.extend({
 
     model: Wine,
+    
     url: 'http://localhost:9000/wines',
+    
     params: {},
-    total: 0,
+    total: undefined,
+
     initialize: function(options) {
       options || (options = {});
       if (options.params) this.params = options.params;
@@ -32,14 +35,13 @@ $(function() {
     },
 
     fetch_total: function() {
+      var that = this;
       var options = { 
         url: this.url + '/count',
         data: this.params,
         contentType: 'application/json',
         success: function(resp, status, xhr) {
-          console.log('back from count');
-          console.log(resp);
-          console.log(status);
+          that.total = status;
           return true;
         }
       };
@@ -48,7 +50,12 @@ $(function() {
 
   });
 
-  var WinesTable = Backbone.View.extend({
+  var WinesTableView = Backbone.View.extend({
+
+    initialize: function () {
+      _.bindAll(this, 'filter', 'filter_debounced', 'page', 'page_len');
+    },
+
     el: '#wines',
     template: _.template($('#wines-template').html()),
 
@@ -60,22 +67,39 @@ $(function() {
     events: {
       'keyup #filter_text': 'filter_debounced',
       'click div.filter':   'filter',
-      'click a.page_2':     'go_page'
+      'click a[page]':      'page',
+      'change #page_len':   'page_len'
     },
     
     filter: function() {
-      this.collection.params.filter = $("#filter_text").val();
-      this.collection.fetch();
+      app.navigateWith({filter: $("#filter_text").val()}, {trigger: true});
     },
 
     filter_debounced: _.debounce(function() {
-      this.collection.params.filter = $("#filter_text").val();
-      this.collection.fetch();
+      this.filter();
     }, 500),
 
-    go_page: function(e) {
-      app.navigate('wines?page=2&len=5', {trigger: true});
-    }
+    page: function(e) {
+      e.preventDefault();
+      var a = $(e.target);
+
+      if (a.parent().hasClass('active')) return;
+      $('a[page]').each(function() {
+        $(this).parent().removeClass('active');
+      });
+      a.parent().addClass('active');
+
+      var page = a.attr('page');
+      app.navigateWith({page: page}, {trigger: true});
+    },
+
+    page_len: function(e) {
+      e.preventDefault();
+      var select = e.target;
+      var len = select.options[select.selectedIndex].value;
+      app.navigateWith({len: len}, {trigger: true});
+    },
+
 
   })
 
@@ -129,8 +153,13 @@ $(function() {
   });
 
   var WineFormView = Backbone.View.extend({
+
     el: '#wineForm',
     template: _.template($('#wineForm-template').html()),
+
+    initialize: function() {
+      _.bindAll(this, 'save', 'cancel', 'close');
+    },
 
     render: function() {
       this.$el.html(this.template(this.model.toJSON()));
@@ -160,10 +189,12 @@ $(function() {
       }
       
       this.close();
+      app.navigate('wines', {trigger: true});
     },
 
     cancel: function() {
-      app.navigate('#wines', {trigger: true});
+      this.close();
+      app.navigate('wines', {trigger: false});
     },
 
     close: function() {
@@ -190,8 +221,8 @@ $(function() {
       $('#breadcrumb').html($('#breadcrumb-template').html());
 
       this.wines = new Wines();
-      this.winesTable = new WinesTable({collection: this.wines});
-      this.winesTable.render();
+      this.winesTableView = new WinesTableView({collection: this.wines});
+      this.winesTableView.render();
     },
 
     list: function(query) {
@@ -225,11 +256,19 @@ $(function() {
       this.wine = new Wine();
       if (this.wineFormView) this.wineFormView.close();
       this.wineFormView = new WineFormView({model: this.wine, collection: this.wines}).render();
+    },
+
+    routeWith: function(params) {
+      return utils.http.addParams(Backbone.history.getHash(),params);
+    },
+
+    navigateWith: function(params, options) {
+      this.navigate(this.routeWith(params), options);
     }
 
   })
 
-  var app = new AppRouter();
+  app = new AppRouter();
   Backbone.history.start();
   app.navigate('wines');
 
