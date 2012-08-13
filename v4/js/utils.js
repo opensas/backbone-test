@@ -1,4 +1,4 @@
-var utils = {};
+var utils = utils || {};
 
 utils.http = {};
 

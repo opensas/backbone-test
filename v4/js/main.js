@@ -53,7 +53,7 @@ $(function() {
   var WinesTableView = Backbone.View.extend({
 
     initialize: function () {
-      _.bindAll(this, 'filter', 'filter_debounced', 'page', 'page_len');
+      _.bindAll(this, 'filter', 'filter_debounced', 'page', 'page_len', 'order');
     },
 
     el: '#wines',
@@ -68,7 +68,8 @@ $(function() {
       'keyup #filter_text': 'filter_debounced',
       'click div.filter':   'filter',
       'click a[page]':      'page',
-      'change #page_len':   'page_len'
+      'change #page_len':   'page_len',
+      'click th[order]':    'order',
     },
     
     filter: function() {
@@ -100,6 +101,29 @@ $(function() {
       app.navigateWith({len: len}, {trigger: true});
     },
 
+    order: function(e) {
+      var th = $(e.target);
+      if (th[0].tagName!='TH') th=th.parent(); // click on the i, look for the parent th
+
+      var order = th.attr('order');
+      var direction = 'asc';
+      if (th.hasClass('order-asc')) direction = 'desc';
+
+      $('th[order]').each(function() {
+        $(this).removeClass('order-asc');
+        $(this).removeClass('order-desc');
+      });
+
+      if (direction === 'asc') {
+        th.addClass('order-asc');
+        th.removeClass('order-desc');
+      } else {
+        th.removeClass('order-asc');
+        th.addClass('order-desc');
+      }
+      app.navigateWith({order: order+' '+direction}, {trigger: true});
+
+    },
 
   })
 
@@ -175,11 +199,12 @@ $(function() {
 
     save: function() {
       this.model.set({
-        name:     $('#name').val(),
-        grapes:   $('#grapes').val(),
-        country:  $('#country').val(),
-        year:     $('#year').val(),
-        grapes:   $('#grapes').val()
+        name:     this.$('#name').val(),
+        grapes:   this.$('#grapes').val(),
+        country:  this.$('#country').val(),
+        region:   this.$('#region').val(),
+        year:     this.$('#year').val(),
+        grapes:   this.$('#grapes').val()
       });
 
       if (this.model.isNew()) {
