@@ -4,6 +4,8 @@ utils.crud = utils.crud || {};
 
 utils.crud.paginate = function(collection) {
 
+  var pagesToShow = 3; // show 3 pages before the current one, the current one, and 3 pages after: 7 pages
+
   /*
   var info = {
     page:   undefined,
@@ -16,37 +18,68 @@ utils.crud.paginate = function(collection) {
   }
   */
 
-  var params = collection.params;
-  var info = {};
-
-  info.page   = parseInt(params.page);
-  info.len    = parseInt(params.len);
-  info.from   = ((info.page-1)*info.len)+1;
-  info.to     = info.from+collection.length-1;
-  info.total  = collection.total;
-  info.last   = Math.ceil(info.total/info.len);
+  var page   = parseInt(collection.page);
+  var len    = parseInt(collection.len);
+  var from   = ((page-1)*len)+1;
+  var to     = from+collection.length-1;
+  var total  = collection.total;
+  var last   = Math.ceil(total/len);
 
   var pages = [];
 
   //first page
-  pages.push({page: 1 , text: "««", active: false, enabled: info.page > 1})
+  pages.push({page: 1 , text: "««", active: false, enabled: page > 1})
   //previous page
-  pages.push({page: info.page + 1 , text: "«", active: false, enabled: info.page > 1})
+  pages.push({page: page - 1 , text: "«", active: false, enabled: page > 1})
 
   // allways show 4 pages before the current and 4 pages after the current
-  var begin_page = info.page - 4;
-  if (begin_page<0) begin_page=0;
+  var beginPage = page - (pagesToShow);
+  if (beginPage < 1) beginPage = 1;
+  var endPage = beginPage + (pagesToShow * 2) + 1; // pre, current, post
 
-  for(var c=1; c<=9; c++) {
-    pages.push({page: c, text:c.toString(), active: (c===info.page), enabled: c<info.last})
+  for(var c=beginPage; c<(endPage); c++) {
+    if (c > last) {
+      break;
+    }
+    pages.push({page: c, text:c.toString(), active: (c===page), enabled: c <= last})
   }
 
   //next page
-  pages.push({page: info.page + 1, text:"»", active: false, enabled: info.page<info.last})
+  pages.push({page: page + 1, text:"»", active: false, enabled: page < last})
   //last page
-  pages.push({page: info.last, text:"»»", active: false, enabled: info.page<info.last})
+  pages.push({page: last, text:"»»", active: false, enabled: page < last})
 
-  info.pages = pages;
+  return {
+    page:   page,
+    len:    len,
+    from:   from,
+    to:     to,
+    total:  total,
+    last:   last,
+    pages:  pages  
+  }
+}
 
-  return info;
+utils.crud.highlight = function(text, search) {
+  var pos = text.toLowerCase().indexOf(search.toLowerCase());
+  if (pos!==-1) {
+    return text.substring(0,pos) +
+      '<span class="label label-info">' +
+      text.substring(pos,pos+search.length) +
+      '</span>' +
+      text.substring(pos+search.length);
+  } else {
+    return text;
+  }
+  
+}
+
+utils.crud.highlightItems = function(items, search) {
+  search = search.toLowerCase();
+  items.each(function() {
+    var item = $(this);
+    if (item.text().toLowerCase().indexOf(search)!==-1) {
+      item.html(utils.crud.highlight(item.html(), search));
+    }
+  })
 }

@@ -57,14 +57,14 @@ utils.http.addParams = function(source, add) {
 }
 
 utils.http.parseQuery = function(url) {
-  var queryString = utils.http.parseParams(url);
+  var query = utils.http.parseParams(url);
 
   var parsed = {};
 
-  if (queryString.page)   parsed.page   = queryString.page;
-  if (queryString.len)    parsed.len    = queryString.len;
-  if (queryString.order)  parsed.order  = queryString.order;
-  if (queryString.filter) parsed.filter = queryString.filter;
+  if (query.page    !== undefined)  parsed.page   = query.page;
+  if (query.len     !== undefined)  parsed.len    = query.len;
+  if (query.order   !== undefined)  parsed.order  = query.order;
+  if (query.filter  !== undefined)  parsed.filter = query.filter;
 
   return parsed;
 }
