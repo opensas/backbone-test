@@ -61,17 +61,10 @@ utils.http.parseQuery = function(url) {
 
   var parsed = {};
 
-/*
   if (queryString.page)   parsed.page   = queryString.page;
   if (queryString.len)    parsed.len    = queryString.len;
   if (queryString.order)  parsed.order  = queryString.order;
   if (queryString.filter) parsed.filter = queryString.filter;
-*/
-
-  parsed.page       = queryString.page || 1;
-  parsed.len        = queryString.len || 1;
-  parsed.order      = queryString.order || '';
-  parsed.filter     = queryString.filter || '';
 
   return parsed;
 }

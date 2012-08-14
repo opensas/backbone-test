@@ -18,8 +18,13 @@ $(function() {
     
     url: 'http://localhost:9000/wines',
     
-    params: {},
-    total: undefined,
+    params: {
+      page: 1,
+      len: 10,
+      order: '',
+      filter: ''
+    },
+    total: 0,
 
     initialize: function(options) {
       options || (options = {});
@@ -41,7 +46,7 @@ $(function() {
         data: this.params,
         contentType: 'application/json',
         success: function(resp, status, xhr) {
-          that.total = status;
+          that.total = resp;
           return true;
         }
       };
@@ -230,6 +235,47 @@ $(function() {
 
   })
 
+  var WinePaginationView = Backbone.View.extend({
+
+    template: _.template($('#winePagination-template').html()),
+
+    paginate: undefined,
+
+    initialize: function() {
+      this.collection.bind('reset', this.render, this);
+      this.collection.bind('change', this.render, this);
+    },
+
+    render: function() {
+      this.paginate = utils.crud.paginate(this.collection);
+      this.$el.html(this.template(this.paginate))
+      this.addAll();
+      return this;
+    },
+
+    addAll: function() {
+      _.each(this.paginate.pages, function(page) {
+        this.addOne(page);
+      }, this);
+    },
+
+    addOne: function(page) {
+      var view = new WinePageView({model: page});
+      view.render();
+      this.$('ul').append(view.render().el);
+    }
+
+  })
+
+  var WinePageView = Backbone.View.extend({
+    template: _.template($('#winePage-template').html()),
+    tagName: 'li',
+    render: function() {
+      this.$el.html(this.template(this.model));
+      return this;
+    }
+  })
+
   var AppRouter = Backbone.Router.extend({
 
     routes: {
@@ -255,8 +301,16 @@ $(function() {
       this.wines.params = utils.http.parseQuery(query);
 
       this.winesView = new WinesView({collection: this.wines});
+      
+      this.winePaginationView = new WinePaginationView({
+        collection: this.wines, el: $('#winePagination')
+      });
+
+      //this.winePaginationView.render();
+
       this.wines.fetch();
       $('#wines').show();
+
     },
 
     edit: function(id) {
