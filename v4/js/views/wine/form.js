@@ -7,7 +7,6 @@ if (!src.views.wine) {src.views.wine = {};}
 
 src.views.wine.FormView = Backbone.View.extend({
 
-	el: '#wineForm',
 	template: _.template($('#wineForm-template').html()),
 
 	initialize: function() {

@@ -7,7 +7,6 @@ if (!src.views.wine) {src.views.wine = {};}
 
 src.views.wine.RowsView = Backbone.View.extend({
 
-  el: '#wines tbody',
   template: _.template($('#wines-template').html()),
 
   initialize: function() {
