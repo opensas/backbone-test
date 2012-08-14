@@ -1,3 +1,5 @@
+/*globals $,_,Backbone,utils,src:true*/
+
 'use strict';
 if (!src) {src = {};}
 
