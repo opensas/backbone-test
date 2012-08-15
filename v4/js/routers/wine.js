@@ -25,19 +25,21 @@ src.routers.wine = Backbone.Router.extend({
       el: '#wines', collection: this.wines
     });
     this.winesTableView.render();
+
+    this.PagesView = new src.views.crud.PagesView({
+      el: $('#winePagination'), collection: this.wines
+    });
+    
+    this.winesView = new src.views.wine.RowsView({
+      el: '#wines tbody', collection: this.wines
+    });    
+    
+    Backbone.history.start();
   },
 
   list: function(query) {
     if (this.wineFormView) {this.wineFormView.close();}
     this.wines.setParams(utils.http.parseQuery(query));
-
-    this.winesView = new src.views.wine.RowsView({
-      el: '#wines tbody', collection: this.wines
-    });
-    
-    this.PaginationView = new src.views.crud.PaginationView({
-      collection: this.wines, el: $('#winePagination')
-    });
 
     this.wines.fetch();
     $('#wines').show();
@@ -74,7 +76,7 @@ src.routers.wine = Backbone.Router.extend({
   },
 
   routeWith: function(params) {
-    return utils.http.addParams(Backbone.history.getHash(),params);
+    return utils.http.addParams(Backbone.history.getHash(), params);
   },
 
   navigateWith: function(params, options) {

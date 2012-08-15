@@ -2,11 +2,12 @@
 
 var src = {};
 
+var app = {};
+
 $(function () {
   'use strict';
 
-  window.app = new src.routers.wine();
-  Backbone.history.start();
+  app = new src.routers.wine();
   app.navigate('wines');
 
 });

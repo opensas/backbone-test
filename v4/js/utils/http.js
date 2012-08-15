@@ -48,8 +48,8 @@ utils.http.addParams = function(source, add) {
     }
   }
 
-  if (typeof source === 'string') {source = utils.http.parseParams(source);}
-  if (typeof add === 'string')    {add = utils.http.parseParams(add);}
+  if (typeof source === 'string') {source = utils.http.parseQuery(source);}
+  if (typeof add === 'string')    {add = utils.http.parseQuery(add);}
 
   for (prop in add) {
     if (add.hasOwnProperty(prop)) {

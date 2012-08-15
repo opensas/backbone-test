@@ -1,26 +1,26 @@
 /*globals $,_,Backbone,utils,src:true*/
 
 'use strict';
-if (!src) {src = {};}
+if (!src) {src = {}; }
 
-if (!src.views) {src.views = {};}
+if (!src.views) { src.views = {}; }
 
-if (!src.views.wine) {src.views.wine = {};}
+if (!src.views.wine) { src.views.wine = {}; }
 
 src.views.wine.RowsView = Backbone.View.extend({
 
   template: _.template($('#wines-template').html()),
 
-  initialize: function() {
+  initialize: function () {
     this.collection.bind('reset', this.render, this);
     this.collection.bind('change', this.render, this);
   },
 
-  render: function() {
+  render: function () {
 
     this.$el.empty();
 
-    _.each(this.collection.models, function(wine) {
+    _.each(this.collection.models, function (wine) {
       var view = new src.views.wine.RowView({
         model: wine, collection: this.collection
       });

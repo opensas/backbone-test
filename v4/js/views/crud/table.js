@@ -10,7 +10,7 @@ if (!src.views.crud) {src.views.crud = {};}
 src.views.crud.TableView = Backbone.View.extend({
 
   initialize: function () {
-    _.bindAll(this, 'filter', 'filter_debounced', 'page', 'page_len', 'order');
+    _.bindAll(this, 'filter', 'filter_debounced', 'page_len', 'order');
   },
 
   template: _.template($('#wines-template').html()),
@@ -26,7 +26,6 @@ src.views.crud.TableView = Backbone.View.extend({
   events: {
     'keyup #filter_text': 'filter_debounced',
     'click div.filter':   'filter',
-    'click a[page]':      'page',
     'change #page_len':   'page_len',
     'click th[order]':    'order'
   },
@@ -38,20 +37,6 @@ src.views.crud.TableView = Backbone.View.extend({
   filter_debounced: _.debounce(function() {
     this.filter();
   }, 500),
-
-  page: function(e) {
-    e.preventDefault();
-    var a = $(e.target);
-
-    if (a.parent().hasClass('active')) { return; }
-    $('a[page]').each(function() {
-      $(this).parent().removeClass('active');
-    });
-    a.parent().addClass('active');
-
-    var page = a.attr('page');
-    app.navigateWith({page: page}, {trigger: true});
-  },
 
   page_len: function(e) {
     e.preventDefault();
@@ -73,15 +58,8 @@ src.views.crud.TableView = Backbone.View.extend({
       $(this).removeClass('order-desc');
     });
 
-    if (direction === 'asc') {
-      th.addClass('order-asc');
-      th.removeClass('order-desc');
-    } else {
-      th.removeClass('order-asc');
-      th.addClass('order-desc');
-    }
+    th.addClass(direction === 'asc' ? 'order-asc' : 'order-desc');
     app.navigateWith({order: order+' '+direction}, {trigger: true});
-
   }
 
 });

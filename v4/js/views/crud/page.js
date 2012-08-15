@@ -7,9 +7,7 @@ if (!src.views) {src.views = {};}
 
 if (!src.views.crud) {src.views.crud = {};}
 
-src.views.crud.PaginationView = Backbone.View.extend({
-
-	template: _.template($('#winePagination-template').html()),
+src.views.crud.PagesView = Backbone.View.extend({
 
 	paginate: undefined,
 
@@ -34,15 +32,46 @@ src.views.crud.PaginationView = Backbone.View.extend({
 	addOne: function(page) {
 	  var view = new src.views.crud.PageView({model: page});
 	  this.$('ul').append(view.render().el);
-	}
+	},
 
-	});
+	template: _.template(' \
+    Showing <%= from %>-<%= to %> of <%= total %> \
+    <div class="pagination"> \
+      <ul> \
+      </ul> \
+    </div> \
+	')
+
+});
 
 src.views.crud.PageView = Backbone.View.extend({
-	template: _.template($('#winePage-template').html()),
 	tagName: 'li',
 	render: function() {
 	  this.$el.html(this.template(this.model));
 	  return this;
-	}
+	},
+
+	events: {
+    'click':    'page'
+  },
+
+  page: function(e) {
+    e.preventDefault();
+    var a = this.$('a');
+
+    if (a.parent().hasClass('active')) { return; }
+    $('a[page]').each(function() {
+      $(this).parent().removeClass('active');
+    });
+    a.parent().addClass('active');
+
+    app.navigateWith({page: this.model.page}, {trigger: true});
+  },
+
+	template: _.template(' \
+        <li class="<%= enabled ? "" : "disabled"%> <%= active ? "active" : ""%>"> \
+          <a href="#" page="<%= page %>" ><%= text %></a> \
+        </li> \
+	')
+
 });
