@@ -32,19 +32,9 @@
 
   <form class="form-search">
 
-    <input type="text" id="filter_text">
-    <div class="btn btn-info btn-small filter" id="filter">
-      <i class="icon-search icon-white"></i>filter</div>
+    <div id="wineFilter"></div>
 
-    <label>Records per page</label>
-    <select class="span1" id="page_len">
-      <option value="3">3</option>
-      <option value="5">5</option>
-      <option value="10">10</option>
-      <option value="25">25</option>
-      <option value="50">50</option>
-      <option value="100">100</option>
-    </select>
+    <div id="winePageLen"></div>
 
     <div id="winePagination"></div>
 
@@ -208,8 +198,9 @@
 
 <script src="js/models/wine.js"></script>
 
+<script src="js/views/crud/page_len.js"></script>
 <script src="js/views/crud/table.js"></script>
+<script src="js/views/crud/filter.js"></script>
 <script src="js/views/crud/page.js"></script>
 <script src="js/views/wine/form.js"></script>
 <script src="js/views/wine/rows.js"></script>
-

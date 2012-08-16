@@ -9,41 +9,30 @@ if (!src.views.crud) {src.views.crud = {};}
 
 src.views.crud.TableView = Backbone.View.extend({
 
-  initialize: function () {
-    _.bindAll(this, 'filter', 'filter_debounced', 'page_len', 'order');
-  },
-
   template: _.template($('#wines-template').html()),
 
   render: function() {
     this.$el.html(this.template());
 
-    this.$('input#filter_text').val(this.collection.filter);
-    this.$('select#page_len').val(this.collection.len);
+    new src.views.crud.PageLenView({
+       el: this.$('#winePageLen'), collection: this.collection
+    }).render();
+
+    new src.views.crud.PagesView({
+      el: this.$('#winePagination'), collection: this.collection
+    }).render();
+
+    new src.views.crud.FilterView({
+      el: this.$('#wineFilter'), collection: this.collection
+    }).render();
+
     return this;
   },
 
   events: {
-    'keyup #filter_text': 'filter_debounced',
-    'click div.filter':   'filter',
-    'change #page_len':   'page_len',
     'click th[order]':    'order'
   },
   
-  filter: function() {
-    app.navigateWith({filter: $("#filter_text").val()}, {trigger: true});
-  },
-
-  filter_debounced: _.debounce(function() {
-    this.filter();
-  }, 500),
-
-  page_len: function(e) {
-    e.preventDefault();
-    var select = e.target;
-    var len = select.options[select.selectedIndex].value;
-    app.navigateWith({len: len}, {trigger: true});
-  },
 
   order: function(e) {
     var th = $(e.target);

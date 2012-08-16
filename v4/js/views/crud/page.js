@@ -9,49 +9,49 @@ if (!src.views.crud) {src.views.crud = {};}
 
 src.views.crud.PagesView = Backbone.View.extend({
 
-	paginate: undefined,
+  paginate: undefined,
 
-	initialize: function() {
-	  this.collection.bind('reset', this.render, this);
-	  this.collection.bind('change', this.render, this);
-	},
+  initialize: function() {
+    this.collection.bind('reset', this.render, this);
+    this.collection.bind('change', this.render, this);
+  },
 
-	render: function() {
-	  this.paginate = utils.crud.paginate(this.collection);
-	  this.$el.html(this.template(this.paginate));
-	  this.addAll();
-	  return this;
-	},
+  render: function() {
+    this.paginate = utils.crud.paginate(this.collection);
+    this.$el.html(this.template(this.paginate));
+    this.addAll();
+    return this;
+  },
 
-	addAll: function() {
-	  _.each(this.paginate.pages, function(page) {
-	    this.addOne(page);
-	  }, this);
-	},
+  addAll: function() {
+    _.each(this.paginate.pages, function(page) {
+      this.addOne(page);
+    }, this);
+  },
 
-	addOne: function(page) {
-	  var view = new src.views.crud.PageView({model: page});
-	  this.$('ul').append(view.render().el);
-	},
+  addOne: function(page) {
+    var view = new src.views.crud.PageView({model: page});
+    this.$('ul').append(view.render().el);
+  },
 
-	template: _.template(' \
+  template: _.template(' \
     Showing <%= from %>-<%= to %> of <%= total %> \
     <div class="pagination"> \
       <ul> \
       </ul> \
     </div> \
-	')
+  ')
 
 });
 
 src.views.crud.PageView = Backbone.View.extend({
-	tagName: 'li',
-	render: function() {
-	  this.$el.html(this.template(this.model));
-	  return this;
-	},
+  tagName: 'li',
+  render: function() {
+    this.$el.html(this.template(this.model));
+    return this;
+  },
 
-	events: {
+  events: {
     'click':    'page'
   },
 
@@ -68,10 +68,10 @@ src.views.crud.PageView = Backbone.View.extend({
     app.navigateWith({page: this.model.page}, {trigger: true});
   },
 
-	template: _.template(' \
+  template: _.template(' \
         <li class="<%= enabled ? "" : "disabled"%> <%= active ? "active" : ""%>"> \
           <a href="#" page="<%= page %>" ><%= text %></a> \
         </li> \
-	')
+  ')
 
 });

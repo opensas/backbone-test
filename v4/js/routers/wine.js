@@ -26,10 +26,6 @@ src.routers.wine = Backbone.Router.extend({
     });
     this.winesTableView.render();
 
-    this.PagesView = new src.views.crud.PagesView({
-      el: $('#winePagination'), collection: this.wines
-    });
-    
     this.winesView = new src.views.wine.RowsView({
       el: '#wines tbody', collection: this.wines
     });    
