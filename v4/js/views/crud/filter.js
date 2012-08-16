@@ -8,19 +8,18 @@ if (!src.views.crud) {src.views.crud = {};}
 src.views.crud.FilterView = Backbone.View.extend({
 
   initialize: function() {
-    _.bindAll(this, 'filter', 'filter_debounced');
     this.collection.bind('reset', this.update, this);
     this.collection.bind('change', this.update, this);
   },
 
   render: function() {
-    this.$el.html(this.template({filter: this.collection.filter}));
+    this.$el.html(this.template());
     return this;
   },
 
   events: {
-    'keyup #filter_text':     'filter_debounced',
-    'click div.filter':       'filter'
+    'keyup #filter_text':   'filter_debounced',
+    'click div.filter':     'filter'
   },
 
   filter: function() {

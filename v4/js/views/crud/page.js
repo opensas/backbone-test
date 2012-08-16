@@ -57,20 +57,16 @@ src.views.crud.PageView = Backbone.View.extend({
 
   page: function(e) {
     e.preventDefault();
-    var a = this.$('a');
+    var li = this.$('li');
 
-    if (a.parent().hasClass('active')) { return; }
-    $('a[page]').each(function() {
-      $(this).parent().removeClass('active');
-    });
-    a.parent().addClass('active');
+    if (li.hasClass('disabled') || li.hasClass('active')) { return; }
 
     app.navigateWith({page: this.model.page}, {trigger: true});
   },
 
   template: _.template(' \
         <li class="<%= enabled ? "" : "disabled"%> <%= active ? "active" : ""%>"> \
-          <a href="#" page="<%= page %>" ><%= text %></a> \
+          <a href="#"><%= text %></a> \
         </li> \
   ')
 

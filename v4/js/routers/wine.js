@@ -11,64 +11,65 @@ src.routers.wine = Backbone.Router.extend({
     '':                         'list',
     'wines':                    'list',
     'wines?*url':               'list',
-    'wines/new':                'add',
+    'wines/new':                'edit',
     'wines/del/:id':            'del',
     'wines/:id':                'edit'
   },
 
   initialize: function() {
-    $('#navbar').html($('#navbar-template').html());
-    $('#breadcrumb').html($('#breadcrumb-template').html());
+    new src.views.widgets.NavBarView({el: '#navbar'}).render();
+    new src.views.widgets.BreadCrumbView({el: '#breadcrumb'}).render();
 
-    this.wines = new src.models.Wines();
-    this.winesTableView = new src.views.crud.TableView({
-      el: '#wines', collection: this.wines
+    this.collection = new src.models.Wines();
+    this.model = undefined;
+
+    new src.views.crud.TableView({
+      el: '#wines', collection: this.collection
+    }).render();
+
+    new src.views.wine.RowsView({
+      el: '#wines tbody', collection: this.collection
     });
-    this.winesTableView.render();
 
-    this.winesView = new src.views.wine.RowsView({
-      el: '#wines tbody', collection: this.wines
-    });    
-    
+    //this.collection.fetch();
+
     Backbone.history.start();
   },
 
   list: function(query) {
-    if (this.wineFormView) {this.wineFormView.close();}
-    this.wines.setParams(utils.http.parseQuery(query));
+    //if (this.wineFormView) {this.wineFormView.close();}
+    this.collection.setParams(utils.http.parseQuery(query));
 
-    this.wines.fetch();
+    this.collection.fetch();
     $('#wines').show();
   },
 
   edit: function(id) {
-    this.wine = this.wines.get(id);
-    if (this.wineFormView) {this.wineFormView.close();}
-    this.wineFormView = new src.views.wine.FormView({
-      el: '#wineForm', model: this.wine
+    this.model = id ? this.collection.get(id) : new src.models.Wine();
+    
+    //if (this.wineFormView) {this.wineFormView.close();}
+    new src.views.wine.FormView({
+      el: '#wineForm', model: this.model, collection: this.collection
     }).render();
   },
 
   del: function(id) {
-    this.wine = this.wines.get(id);
-    if (this.wine) {
-      if (confirm('are you sure you want to delete the current record?')) {
-        this.wine.destroy();
-        this.navigate('wines', {trigger: true});
-        return;
-      }
-    } else {
+    this.model = this.collection.get(id);
+    if (!this.model) {
       alert('Item not found');
+      this.navigate('wines', {trigger: true});
+      return;
     }
-    this.navigate('wines');
-  },
-
-  add: function() {
-    this.wine = new src.model.Wine();
-    if (this.wineFormView) {this.wineFormView.close();}
-    this.wineFormView = new src.views.wine.FormView({
-      el: '#wineForm', model: this.wine, collection: this.wines
-    }).render();
+    if (confirm('are you sure you want to delete the current record?')) {
+      var that = this;
+      this.model.destroy({success: function() {
+        that.navigate('wines', {trigger: true});
+      }});
+      //this.navigate('wines', {trigger: true});
+      return;
+    } else {
+      this.navigate('wines', {trigger: false});
+    }
   },
 
   routeWith: function(params) {

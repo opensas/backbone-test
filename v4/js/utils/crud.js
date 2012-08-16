@@ -34,7 +34,7 @@ utils.crud.paginate = function(collection) {
   //first page
   pages.push({page: 1 , text: "««", active: false, enabled: page > 1});
   //previous page
-  pages.push({page: page - 1 , text: "«", active: false, enabled: page > 1});
+  pages.push({page: Math.max(1,page-1) , text: "«", active: false, enabled: page > 1});
 
   // allways show 4 pages before the current and 4 pages after the current
   var beginPage = page - (pagesToShow);

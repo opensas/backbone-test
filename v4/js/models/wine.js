@@ -30,6 +30,7 @@ src.models.Wines = Backbone.Collection.extend({
 
   setPage: function (value) {
     if (value !== undefined && value !== this.page) {
+      if (value < 1) { value = 1 };
       this.page = value;
     }
   },
