@@ -2,7 +2,6 @@
 
 'use strict';
 var utils = utils || {};
-
 utils.crud = utils.crud || {};
 
 utils.crud.paginate = function(collection) {

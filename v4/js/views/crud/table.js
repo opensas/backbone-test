@@ -2,9 +2,7 @@
 
 'use strict';
 if (!src) {src = {};}
-
 if (!src.views) {src.views = {};}
-
 if (!src.views.crud) {src.views.crud = {};}
 
 src.views.crud.TableView = Backbone.View.extend({

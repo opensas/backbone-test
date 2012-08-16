@@ -2,7 +2,6 @@
 
 'use strict';
 if (!src) { src = {}; }
-
 if (!src.models) { src.models = {}; }
 
 src.models.Wine = Backbone.Model.extend({
