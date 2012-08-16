@@ -15,7 +15,6 @@ src.views.wine.RowsView = Backbone.View.extend({
   },
 
   render: function() {
-
     this.$el.empty();
 
     _.each(this.collection.models, function (wine) {
