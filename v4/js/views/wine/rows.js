@@ -2,9 +2,7 @@
 
 'use strict';
 if (!src) { src = {}; }
-
 if (!src.views) { src.views = {}; }
-
 if (!src.views.wine) { src.views.wine = {}; }
 
 src.views.wine.RowsView = Backbone.View.extend({

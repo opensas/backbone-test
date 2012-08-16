@@ -1,7 +1,6 @@
 /*globals $,_,Backbone,utils,confirm,alert*/
 
 var src = {};
-
 var app = {};
 
 $(function () {

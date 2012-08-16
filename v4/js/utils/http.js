@@ -1,7 +1,6 @@
 'use strict';
 
 var utils = utils || {};
-
 utils.http = utils.http || {};
 
 utils.http.parseParams = function(url) {
